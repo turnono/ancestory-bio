@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/ancestory-bio",
+    "public": "dist/ancestory-bio/browser",
     "ignore": [
       "firebase.json",
       "**/.*",
