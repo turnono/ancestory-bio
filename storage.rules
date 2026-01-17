@@ -1,0 +1,35 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function hasRole(role) {
+      return isSignedIn() && 
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+    
+    // Genomic files (FASTA, etc.)
+    match /genomic-files/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && (hasRole('admin') || hasRole('researcher'));
+      allow delete: if hasRole('admin');
+    }
+    
+    // Culture images
+    match /culture-images/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+      allow delete: if isSignedIn() && (hasRole('admin') || hasRole('researcher'));
+    }
+    
+    // Batch images
+    match /batch-images/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+      allow delete: if isSignedIn();
+    }
+  }
+}
