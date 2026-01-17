@@ -121,23 +121,11 @@ ancestory-bio/
 └── README.md
 ```
 
-## 🧪 Testing with Sample Data
-
-To populate the database with sample data for testing:
-
-1. Log in to the application
-2. Open browser console (F12)
-3. Copy the contents of `seed-data.js`
-4. Paste into console and run `seedData()`
-5. Refresh the page
-
-See [SEEDING.md](SEEDING.md) for detailed instructions.
-
 ## 🛠️ Built With
 
 - **[Angular 17](https://angular.dev)** - Frontend framework
-- **[Firebase](https://firebase.google.com)** - Backend services
-- **[TailwindCSS](https://tailwindcss.com)** - Utility-first CSS
+- **[Firebase](https://firebase.google.com)** - Backend services (Auth, Firestore, Storage)
+- **[TailwindCSS](https://tailwindcss.com)** - Utility-first CSS framework
 - **[Chart.js](https://www.chartjs.org)** - Data visualization
 - **[D3.js](https://d3js.org)** - Advanced visualizations (planned)
 
@@ -150,11 +138,11 @@ The application is configured as a Progressive Web App with:
 
 ## 🔒 Security
 
-- Firebase Authentication
-- Firestore security rules
-- Storage security rules
-- Role-based access control
-- Protected routes
+- Firebase Authentication with email/password
+- Firestore security rules with role-based access control
+- Storage security rules for file uploads
+- Protected routes with auth guards
+- Production-grade security configuration
 
 ## 📊 Data Models
 
@@ -185,7 +173,7 @@ The application is configured as a Progressive Web App with:
 - [x] Global Navigation
 - [x] Yield Tracker with Chart.js
 - [x] Batch Management
-- [x] Data Seeding Script
+- [x] Firebase Deployment
 - [ ] Complete Enzyme Forms
 - [ ] Complete Organism Forms
 - [ ] D3.js Phylogenetic Tree
