@@ -53,6 +53,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/enzymes/enzyme-form/enzyme-form.component').then(m => m.EnzymeFormComponent)
       },
       {
+        path: 'edit/:id',
+        loadComponent: () => import('./features/enzymes/enzyme-form/enzyme-form.component').then(m => m.EnzymeFormComponent)
+      },
+      {
         path: ':id',
         loadComponent: () => import('./features/enzymes/enzyme-detail/enzyme-detail.component').then(m => m.EnzymeDetailComponent)
       }
@@ -68,6 +72,10 @@ export const routes: Routes = [
       },
       {
         path: 'new',
+        loadComponent: () => import('./features/organisms/organism-form/organism-form.component').then(m => m.OrganismFormComponent)
+      },
+      {
+        path: 'edit/:id',
         loadComponent: () => import('./features/organisms/organism-form/organism-form.component').then(m => m.OrganismFormComponent)
       },
       {

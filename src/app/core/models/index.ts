@@ -87,6 +87,14 @@ export interface Organism {
   name: string;
   type: OrganismType;
   strain: string;
+  taxonomy?: {
+    genus?: string;
+    species?: string;
+  };
+  metadata?: {
+    growthCharacteristics?: string;
+    notes?: string;
+  };
   genomicFiles: GenomicFile[];
   cultureImages: CultureImage[];
   expressedEnzymes: string[]; // Array of enzyme IDs
