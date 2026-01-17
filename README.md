@@ -1,123 +1,219 @@
-# AncestryBio Dash - Quick Start Guide
+# AncestryBio Dash 🧬
 
-## Prerequisites
-- Node.js 18+ installed
+A specialized LIMS (Laboratory Information Management System) for biotech labs focusing on biosynthetic cannabinoid production. Track enzyme promiscuity, visualize yield data, and manage microbial host repositories.
+
+![AncestryBio Dash](https://img.shields.io/badge/Angular-17-red?logo=angular)
+![Firebase](https://img.shields.io/badge/Firebase-10.8-orange?logo=firebase)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-blue?logo=tailwindcss)
+![Chart.js](https://img.shields.io/badge/Chart.js-4.4-ff6384?logo=chartdotjs)
+
+## ✨ Features
+
+### 🔐 Authentication & Authorization
+- Email/Password authentication via Firebase
+- Role-based access control (Admin, Researcher, Lab Tech)
+- Protected routes with auth guards
+- User profile management
+
+### 📊 Yield Tracker
+- Track 1-to-many cannabinoid outputs (CBGA → THCA/CBDA/CBCA)
+- Interactive Chart.js visualizations
+- Batch management with detailed records
+- Peak yield detection
+- Stats dashboard
+
+### 🧬 Enzyme Catalog
+- Manage enzyme repository
+- Track enzyme types (Ancestral, Modern, Intermediate)
+- Specialization tracking (Promiscuous, THCA-specific, CBDA-specific, CBCA-specific)
+- Metadata management (sequence, reconstruction method, confidence scores)
+
+### 🦠 Organism Repository
+- Microbial host management
+- Taxonomy tracking
+- Genomic file management
+- Culture image gallery
+
+### 🌳 Phylogenetic Tree (Coming Soon)
+- D3.js interactive tree visualization
+- Enzyme family evolution tracking
+- Comparative analysis
+
+### 🎨 Premium UI/UX
+- Modern glassmorphic design
+- Dark mode support
+- Responsive layout
+- Global navigation
+- Empty states with clear CTAs
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+ and npm
 - Firebase account
-- Git (optional)
+- Git
 
-## Installation
+### Installation
 
-1. **Install Dependencies**
+1. **Clone the repository**
    ```bash
-   cd /Users/abdullah/Documents/Manual_Library/Github/ancestory-bio
-   npm install --legacy-peer-deps
+   git clone https://github.com/turnono/ancestory-bio.git
+   cd ancestory-bio
    ```
 
-2. **Configure Firebase**
-   - Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
-   - Enable Authentication (Email/Password)
-   - Enable Firestore Database (test mode)
-   - Enable Cloud Storage (test mode)
-   - Copy your Firebase config
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-3. **Update Environment Files**
+3. **Configure Firebase**
+   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com)
+   - Enable Authentication (Email/Password)
+   - Create a Firestore database
+   - Create a Storage bucket
+   - Copy your Firebase config to `src/environments/environment.ts`:
    
-   Edit `src/environments/environment.ts` and `src/environments/environment.prod.ts`:
    ```typescript
    export const environment = {
-     production: false, // true for prod
+     production: false,
      firebase: {
-       apiKey: "YOUR_API_KEY",
-       authDomain: "YOUR_PROJECT.firebaseapp.com",
-       projectId: "YOUR_PROJECT_ID",
-       storageBucket: "YOUR_PROJECT.appspot.com",
-       messagingSenderId: "YOUR_SENDER_ID",
-       appId: "YOUR_APP_ID",
-       measurementId: "YOUR_MEASUREMENT_ID"
-     },
-     features: {
-       enableOfflineMode: true,
-       enablePushNotifications: true,
-       enableAnalytics: false // true for prod
+       apiKey: 'YOUR_API_KEY',
+       authDomain: 'YOUR_AUTH_DOMAIN',
+       projectId: 'YOUR_PROJECT_ID',
+       storageBucket: 'YOUR_STORAGE_BUCKET',
+       messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
+       appId: 'YOUR_APP_ID'
      }
    };
    ```
 
-4. **Run Development Server**
+4. **Start the development server**
    ```bash
    npm start
    ```
-   
-   Open [http://localhost:4200](http://localhost:4200)
 
-5. **Create First User**
-   - Navigate to `/auth/register`
-   - Create an admin account
-   - Start using the dashboard!
+5. **Open your browser**
+   Navigate to `http://localhost:4200`
 
-## Build for Production
+## 📦 Project Structure
 
-```bash
-npm run build
+```
+ancestory-bio/
+├── src/
+│   ├── app/
+│   │   ├── core/
+│   │   │   ├── guards/          # Route guards
+│   │   │   ├── models/          # Data models
+│   │   │   └── services/        # Business logic services
+│   │   ├── features/
+│   │   │   ├── auth/            # Authentication
+│   │   │   ├── dashboard/       # Main dashboard
+│   │   │   ├── yield-tracker/   # Yield tracking
+│   │   │   ├── enzymes/         # Enzyme management
+│   │   │   ├── organisms/       # Organism management
+│   │   │   └── phylogenetic-tree/
+│   │   ├── app.component.ts     # Root component
+│   │   └── app.routes.ts        # Routing configuration
+│   ├── environments/            # Environment configs
+│   └── styles.css               # Global styles
+├── seed-data.js                 # Data seeding script
+├── SEEDING.md                   # Seeding guide
+└── README.md
 ```
 
-Output will be in `dist/ancestory-bio/`
+## 🧪 Testing with Sample Data
 
-## Firestore Security Rules
+To populate the database with sample data for testing:
 
-Copy this to Firebase Console → Firestore → Rules:
+1. Log in to the application
+2. Open browser console (F12)
+3. Copy the contents of `seed-data.js`
+4. Paste into console and run `seedData()`
+5. Refresh the page
 
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth.uid == userId;
-    }
-    
-    match /batches/{batchId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null;
-      allow delete: if request.auth != null && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'researcher'];
-    }
-    
-    match /enzymes/{enzymeId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'researcher'];
-    }
-    
-    match /organisms/{organismId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'researcher'];
-    }
-  }
-}
-```
+See [SEEDING.md](SEEDING.md) for detailed instructions.
 
-## Troubleshooting
+## 🛠️ Built With
 
-### Build Errors
-- Clear npm cache: `npm cache clean --force`
-- Reinstall: `rm -rf node_modules package-lock.json && npm install --legacy-peer-deps`
+- **[Angular 17](https://angular.dev)** - Frontend framework
+- **[Firebase](https://firebase.google.com)** - Backend services
+- **[TailwindCSS](https://tailwindcss.com)** - Utility-first CSS
+- **[Chart.js](https://www.chartjs.org)** - Data visualization
+- **[D3.js](https://d3js.org)** - Advanced visualizations (planned)
 
-### Firebase Connection Issues
-- Verify environment.ts has correct Firebase config
-- Check Firebase project is active
-- Ensure Authentication is enabled
+## 📱 PWA Support
 
-### CSS Warnings
-- Tailwind `@apply` warnings are expected and don't affect functionality
+The application is configured as a Progressive Web App with:
+- Offline functionality (planned)
+- Install to home screen
+- Service worker caching
 
-## Next Features to Implement
+## 🔒 Security
 
-1. **Yield Tracker** - Batch input forms and real-time dashboard
-2. **Phylogenetic Tree** - D3.js visualization with NEWICK support
-3. **Organism Management** - FASTA file uploads and image galleries
-4. **PWA Features** - Offline mode and push notifications
+- Firebase Authentication
+- Firestore security rules
+- Storage security rules
+- Role-based access control
+- Protected routes
 
-For detailed implementation plan, see `implementation_plan.md`
+## 📊 Data Models
+
+### Batch
+- Enzyme and organism associations
+- CBGA input tracking
+- Cannabinoid output percentages (THCA, CBDA, CBCA)
+- Status tracking (in-progress, completed, peak-yield)
+- Lab tech attribution
+
+### Enzyme
+- Type classification (Ancestral, Modern, Intermediate)
+- Specialization (Promiscuous, THCA, CBDA, CBCA)
+- Sequence data
+- Reconstruction metadata
+- Confidence scores
+
+### Organism
+- Taxonomy information
+- Strain details
+- Genomic file management
+- Culture images
+- Expressed enzymes
+
+## 🚧 Roadmap
+
+- [x] Authentication & Authorization
+- [x] Global Navigation
+- [x] Yield Tracker with Chart.js
+- [x] Batch Management
+- [x] Data Seeding Script
+- [ ] Complete Enzyme Forms
+- [ ] Complete Organism Forms
+- [ ] D3.js Phylogenetic Tree
+- [ ] CSV/PDF Export
+- [ ] Real-time Notifications
+- [ ] Advanced Search
+- [ ] Mobile Optimization
+- [ ] Unit & E2E Tests
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 👨‍💻 Author
+
+**AncestryBio Team**
+
+## 🙏 Acknowledgments
+
+- Angular team for the amazing framework
+- Firebase for backend infrastructure
+- Chart.js for beautiful visualizations
+- TailwindCSS for the design system
+
+---
+
+**Built with ❤️ for biotech research labs**
