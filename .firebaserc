@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "ancestrybio"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }
