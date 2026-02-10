@@ -112,12 +112,12 @@ import { Enzyme } from '../../../core/models';
               </div>
 
               <!-- Sequence -->
-              <div *ngIf="enzyme.metadata?.sequence" class="md:col-span-2">
+              <div *ngIf="enzyme.sequence || enzyme.metadata?.sequence" class="md:col-span-2">
                 <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
                   Amino Acid Sequence
                 </label>
                 <div class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 font-mono text-sm text-gray-900 dark:text-white break-all">
-                  {{ enzyme.metadata.sequence }}
+                  {{ enzyme.sequence || enzyme.metadata?.sequence }}
                 </div>
               </div>
             </div>

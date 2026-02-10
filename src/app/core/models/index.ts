@@ -24,8 +24,11 @@ export interface Batch {
   id: string;
   enzymeId: string;
   enzymeName?: string; // Denormalized for display
+  organismId?: string;
+  organismName?: string; // Denormalized for display
   cbgaInput: number; // Input in milligrams
   outputs: CannabinoidOutputs;
+  conditions?: ProductionConditions; // Batch production parameters
   timestamp: Date;
   labTechId: string;
   labTechName?: string; // Denormalized for display
@@ -37,6 +40,18 @@ export interface CannabinoidOutputs {
   thca: number; // Percentage (0-100)
   cbda: number; // Percentage (0-100)
   cbca: number; // Percentage (0-100)
+  cbg?: number; // Remaining CBG percentage (optional)
+}
+
+/**
+ * Production conditions for batch tracking
+ */
+export interface ProductionConditions {
+  temperature?: number; // Temperature in °C
+  ph?: number; // pH value
+  duration?: number; // Duration in hours
+  inductionOD?: number; // Optical density at induction
+  substrateConcentration?: number; // Substrate concentration in μM
 }
 
 export enum BatchStatus {
@@ -53,6 +68,8 @@ export interface Enzyme {
   name: string;
   type: EnzymeType;
   specialization: EnzymeSpecialization;
+  sequence?: string; // Amino acid sequence
+  sequenceLength?: number; // Number of amino acids
   newickData?: string; // Phylogenetic tree in NEWICK format
   metadata: EnzymeMetadata;
   createdAt: Date;
@@ -72,11 +89,62 @@ export enum EnzymeSpecialization {
   CBCA_SPECIFIC = 'cbca'
 }
 
+/**
+ * Kinetic parameters for enzyme catalysis
+ */
+export interface KineticParameters {
+  km_uM?: number; // Michaelis constant in micromolar
+  kcat_s?: number; // Turnover number in per second
+  catalyticEfficiency?: number; // kcat/Km
+}
+
+/**
+ * Product profile for enzyme outputs
+ */
+export interface ProductProfile {
+  primary?: string; // Primary product (e.g., 'CBDA', 'THCA', 'CBCA')
+  secondary?: string[]; // Secondary products with trace amounts
+}
+
 export interface EnzymeMetadata {
-  sequence: string;
+  sequence?: string; // Amino acid sequence (deprecated, use Enzyme.sequence)
   reconstructionMethod?: string;
   confidenceScore?: number; // 0-1
   description?: string;
+  source?: string; // Data source (e.g., 'Wageningen University Study')
+  ancestralNode?: string; // Phylogenetic node identifier
+  modernHomologs?: string[]; // Related modern enzymes
+  catalyticResidues?: string[]; // Active site residues (e.g., ['H292', 'D294', 'H338'])
+  substrateSpecificity?: string; // Primary substrate
+  productProfile?: ProductProfile; // Expected product distribution
+  kineticParameters?: KineticParameters; // Enzyme kinetics
+  studyReference?: string; // Scientific reference
+  fastaStorageUrl?: string; // Cloud Storage URL for FASTA file
+}
+
+/**
+ * Full Linnaean taxonomy classification
+ */
+export interface Taxonomy {
+  kingdom?: string;
+  phylum?: string;
+  class?: string;
+  order?: string;
+  family?: string;
+  genus?: string;
+  species?: string;
+}
+
+/**
+ * Organism metadata including growth parameters
+ */
+export interface OrganismMetadata {
+  growthCharacteristics?: string;
+  notes?: string;
+  growthTemp?: string; // Optimal temperature (e.g., '30°C')
+  optimalPh?: number; // Optimal pH
+  doublingTime?: string; // Doubling time (e.g., '90 min')
+  applications?: string[]; // Common applications
 }
 
 /**
@@ -87,14 +155,8 @@ export interface Organism {
   name: string;
   type: OrganismType;
   strain: string;
-  taxonomy?: {
-    genus?: string;
-    species?: string;
-  };
-  metadata?: {
-    growthCharacteristics?: string;
-    notes?: string;
-  };
+  taxonomy?: Taxonomy;
+  metadata?: OrganismMetadata;
   genomicFiles: GenomicFile[];
   cultureImages: CultureImage[];
   expressedEnzymes: string[]; // Array of enzyme IDs

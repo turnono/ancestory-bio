@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FileUploadService, UploadResult } from '../../core/services/file-upload.service';
+import { FileUploadService, UploadResult } from '../../../core/services/file-upload.service';
 
 @Component({
   selector: 'app-file-upload',
@@ -10,13 +10,11 @@ import { FileUploadService, UploadResult } from '../../core/services/file-upload
     <div class="file-upload-container">
       <!-- Drop Zone -->
       <div 
-        class="border-2 border-dashed rounded-lg p-8 text-center transition-colors"
-        [class.border-purple-500]="isDragging"
-        [class.border-gray-300]="!isDragging"
-        [class.bg-purple-50]="isDragging"
-        [class.dark:border-purple-400]="isDragging"
-        [class.dark:border-gray-600]="!isDragging"
-        [class.dark:bg-purple-900/10]="isDragging"
+        class="border-2 border-dashed rounded-lg p-8 text-center transition-colors dark:border-gray-600"
+        [ngClass]="{
+          'border-purple-500 bg-purple-50 dark:border-purple-400 dark:bg-purple-900/10': isDragging,
+          'border-gray-300': !isDragging
+        }"
         (dragover)="onDragOver($event)"
         (dragleave)="onDragLeave($event)"
         (drop)="onDrop($event)">
@@ -158,6 +156,7 @@ export class FileUploadComponent {
 
   private async handleFiles(files: File[]): Promise<void> {
     this.errorMessage = '';
+    const newlyUploaded: UploadResult[] = [];
 
     // Validate files
     const allowedTypes = this.accept.split(',').map(t => t.trim());
@@ -181,6 +180,7 @@ export class FileUploadComponent {
         this.uploadProgress = 0;
         const result = await this.fileUploadService.uploadFileAndGetUrl(file, this.storagePath);
         this.uploadedFiles.push(result);
+        newlyUploaded.push(result);
         this.uploadProgress = 100;
         
         // Reset progress after a delay
@@ -192,7 +192,9 @@ export class FileUploadComponent {
       }
     }
 
-    this.filesUploaded.emit(this.uploadedFiles);
+    if (newlyUploaded.length > 0) {
+      this.filesUploaded.emit(newlyUploaded);
+    }
   }
 
   async removeFile(file: UploadResult): Promise<void> {

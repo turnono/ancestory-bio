@@ -101,15 +101,33 @@ export class FileUploadService {
   /**
    * Validate file type
    * @param file The file to validate
-   * @param allowedTypes Array of allowed MIME types
+   * @param allowedTypes Array of accepted file patterns from input accept attribute
    * @returns true if valid, false otherwise
    */
   validateFileType(file: File, allowedTypes: string[]): boolean {
-    return allowedTypes.some(type => {
-      if (type.endsWith('/*')) {
-        return file.type.startsWith(type.replace('/*', ''));
+    if (!allowedTypes.length) {
+      return true;
+    }
+
+    const fileType = (file.type || '').toLowerCase();
+    const fileName = file.name.toLowerCase();
+
+    return allowedTypes.some(rawType => {
+      const type = rawType.trim().toLowerCase();
+      if (!type || type === '*/*') {
+        return true;
       }
-      return file.type === type;
+
+      if (type.startsWith('.')) {
+        return fileName.endsWith(type);
+      }
+
+      if (type.endsWith('/*')) {
+        const prefix = `${type.slice(0, -2)}/`;
+        return fileType.startsWith(prefix);
+      }
+
+      return fileType === type;
     });
   }
 

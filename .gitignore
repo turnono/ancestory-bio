@@ -40,3 +40,9 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+ancestrybio-firebase-adminsdk.json
+*-firebase-adminsdk*.json
+firebase-adminsdk*.json
+!*-firebase-adminsdk*.example.json
+!firebase-adminsdk*.example.json
+!ancestrybio-firebase-adminsdk.example.json
